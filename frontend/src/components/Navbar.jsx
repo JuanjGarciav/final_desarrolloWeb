@@ -3,7 +3,7 @@ export default function Navbar({ email, onLogout }) {
     <nav className="navbar">
       <div className="navbar-brand">
         <span className="brand-dot" />
-        GastroOpinión
+        Gastro tour
       </div>
       <div className="navbar-right">
         <span className="navbar-email">{email}</span>
