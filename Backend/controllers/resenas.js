@@ -34,7 +34,7 @@ function crearResena(req, resp) {
 }
 
 function consultarTodas(req, resp) {
-    Resena.find({ usuario: req.userId }).sort({ createdAt: -1 }).then(
+    Resena.find({}).populate('usuario', 'email').sort({ createdAt: -1 }).then(
         (resenas) => {
             resp.status(200).send(resenas);
         }
