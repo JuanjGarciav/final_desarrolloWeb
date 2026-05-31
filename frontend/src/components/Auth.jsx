@@ -11,29 +11,19 @@ export default function Auth({ onAuthSuccess }) {
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    const url = isLogin 
-      ? 'http://localhost:1702/api/usuario/login' 
+    const url = isLogin
+      ? 'http://localhost:1702/api/usuario/login'
       : 'http://localhost:1702/api/usuario/registrar';
-
     try {
-      const response = await fetch(url, {
+      const res = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Ocurrió un error en el servidor');
-      }
-
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Error en el servidor');
       sessionStorage.setItem('token', data.token);
       sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
-      
       onAuthSuccess(data.usuario, data.token);
     } catch (err) {
       setError(err.message);
@@ -42,62 +32,69 @@ export default function Auth({ onAuthSuccess }) {
     }
   };
 
+  const switchMode = () => { setIsLogin(!isLogin); setError(''); };
+
   return (
-    <div className="auth-container animate-fade-in">
-      <div className="card auth-card">
-        <div className="auth-header">
-          <h1>Reseñas de Restaurantes</h1>
-          <p>{isLogin ? 'Inicia sesión para continuar' : 'Crea una cuenta para empezar'}</p>
+    <div className="auth-page">
+      <div className="auth-left">
+        <div className="auth-left-glow" />
+        <div className="auth-left-glow2" />
+        <div className="auth-divider" />
+        <p className="auth-left-logo">Gastro tour - Final Desarrollo Web</p>
+        <div className="auth-left-bottom">
+          <h1 className="auth-big-title">
+            Sabor<br/>
+            <span className="amber">que</span><br/>
+            <span className="outline">emociona.</span>
+          </h1>
+          <p className="auth-desc">
+            Registra tus experiencias gastronómicas, comparte reseñas
+            y descubre los favoritos de la comunidad.
+          </p>
         </div>
+      </div>
 
-        {error && (
-          <div className="alert-banner">
-            <span>{error}</span>
+      <div className="auth-right">
+        <div className="auth-form-box fade-in">
+          <h2 className="auth-form-title">{isLogin ? 'Bienvenido' : 'Únete'}</h2>
+          <p className="auth-form-sub">
+            {isLogin ? 'Ingresa tus credenciales para continuar.' : 'Crea tu cuenta en segundos.'}
+          </p>
+
+          {error && <div className="auth-error">{error}</div>}
+
+          <form onSubmit={handleSubmit}>
+            <div className="form-field">
+              <label className="form-label">Correo electrónico</label>
+              <input
+                type="email" value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="correo@ejemplo.com" required
+              />
+            </div>
+            <div className="form-field">
+              <label className="form-label">Contraseña</label>
+              <input
+                type="password" value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••" required
+              />
+            </div>
+            <button
+              type="submit" className="btn-primary"
+              style={{ width: '100%', marginTop: '0.5rem' }}
+              disabled={loading}
+            >
+              {loading ? 'Un momento…' : isLogin ? 'Iniciar sesión' : 'Crear cuenta'}
+            </button>
+          </form>
+
+          <div className="auth-switch">
+            {isLogin
+              ? <p>¿No tienes cuenta? <span onClick={switchMode}>Regístrate aquí</span></p>
+              : <p>¿Ya tienes cuenta? <span onClick={switchMode}>Inicia sesión</span></p>
+            }
           </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Correo Electrónico</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="correo@ejemplo.com"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
-          <button type="submit" style={{ width: '100%', marginTop: '1rem' }} disabled={loading}>
-            {loading ? 'Procesando...' : isLogin ? 'Iniciar Sesión' : 'Registrarse'}
-          </button>
-        </form>
-
-        <div className="auth-switch">
-          {isLogin ? (
-            <p>
-              ¿No tienes una cuenta?{' '}
-              <span onClick={() => { setIsLogin(false); setError(''); }}>Regístrate aquí</span>
-            </p>
-          ) : (
-            <p>
-              ¿Ya tienes una cuenta?{' '}
-              <span onClick={() => { setIsLogin(true); setError(''); }}>Inicia sesión aquí</span>
-            </p>
-          )}
         </div>
       </div>
     </div>
