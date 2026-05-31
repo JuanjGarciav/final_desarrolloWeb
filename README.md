@@ -1,4 +1,4 @@
-# Gatro tour — Final Desarrollo Web
+# Gastro tour — Final Desarrollo Web
 
 Aplicación web para registrar y compartir reseñas de restaurantes.
 
